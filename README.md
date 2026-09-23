@@ -2,12 +2,37 @@
 
 Generated output only. **No source lives here.**
 
-This repository exists solely to serve the FamilyManager web build over GitHub Pages, because
-the source repository is private and GitHub Pages requires a public repository on a free plan.
-Every file under `docs/` is produced by `expo export --platform web` and is overwritten wholesale
-on each deploy — edits made there will be lost.
+This repository exists solely to serve the Nook web build over GitHub Pages, because the source
+repository is private and GitHub Pages requires a public repository on a free plan. Everything
+under `docs/` is written by the source repository's deploy script and replaced wholesale on each
+deploy — edits made there will be lost.
 
-Source: the private `dancki/FamilyManager` repository.
+Source: the private `dancki/NookDev` repository.
+
+## How a deploy happens
+
+From a `dancki/NookDev` checkout:
+
+```sh
+sh scripts/deploy-web.sh /path/to/this/checkout
+```
+
+The script builds the app with `expo export --platform web` for the `/Nook` base path, with
+`https://dancki.github.io/Nook` as the origin for the links the app generates. It takes the
+Supabase URL and publishable key from NookDev's `.env` when there is one (otherwise from the
+environment), and refuses to build if the URL is empty or points at localhost, or if the key is
+empty. It then deletes `docs/` here, copies the export in, re-creates the two scaffolding files
+below, and prints `git status` for this repository. Committing and pushing here is done by hand;
+the push is what Pages publishes.
+
+Pass the path explicitly: without an argument the script looks for `../nook` beside the NookDev
+checkout, lowercase, which misses a checkout named `Nook` on a case-sensitive filesystem.
+
+GitHub Pages cannot be configured to send custom response headers, so the build is served with
+only the Content Security Policy its `index.html` carries as a meta tag, and without clickjacking
+protection (`frame-ancestors` works only as a header). That makes this a preview host, not the
+production one; NookDev's `docs/ops/production-checklist.md` §5 lists the headers a production
+host must send.
 
 ## Why the build lives in `docs/`
 
@@ -22,6 +47,8 @@ build's `/Nook` base path is unaffected by this layout. **If the Pages source is
 `/ (root)`, this directory must move back up**, or the site breaks the same way in reverse.
 
 ## Two files that are scaffolding, not build output
+
+The deploy script re-creates both on every deploy, since it replaces `docs/` wholesale.
 
 - `docs/.nojekyll` — GitHub Pages runs Jekyll by default, and Jekyll ignores any directory whose
   name begins with an underscore. Without this file the entire `_expo/` directory (which holds

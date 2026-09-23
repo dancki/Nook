@@ -1,9 +1,34 @@
 <!DOCTYPE html>
+<!--
+  The HTML shell for the web export. With `web.output: 'single'` (app.config.ts) Expo uses THIS
+  file as the template (`public/index.html`) — `app/+html.tsx` is only consulted for
+  `output: 'static'`. Keep the two in step.
+
+  Content-Security-Policy (review H-10): the site is currently served from GitHub Pages, which
+  cannot set response headers, so the policy travels as a <meta> tag. Every directive below works
+  in meta form EXCEPT `frame-ancestors`, which browsers only honour as a header; it is kept so the
+  intent is documented, and hosting should move to a provider that sends this exact value as a
+  `Content-Security-Policy` header (see docs/ops/production-checklist.md).
+
+  script-src 'self': the export references the bundle with a <script src> and emits no inline
+  script (verified in the exported index.html). style-src needs 'unsafe-inline' for the reset
+  below and react-native-web's runtime stylesheet. img-src/connect-src cover Supabase storage,
+  REST and realtime; data:/blob: images are the picker previews. They also allow the local
+  Supabase stack (`supabase start`, loopback port 54321), which local development and the CI E2E
+  job point the web build at: without it the app cannot read anything and every account reads
+  as not yet age-confirmed. Loopback is not an exfiltration route, so this does not weaken the
+  policy for the deployed site.
+-->
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in http://127.0.0.1:54321 http://localhost:54321; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.supabase.in wss://*.supabase.in http://127.0.0.1:54321 http://localhost:54321 ws://127.0.0.1:54321 ws://localhost:54321; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
     <title>Nook</title>
     <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
     <style id="expo-reset">
@@ -26,12 +51,8 @@
   <link rel="icon" href="/Nook/favicon.ico"/></head>
 
   <body>
-    <!-- Use static rendering with Expo Router to support running without JavaScript. -->
-    <noscript>
-      You need to enable JavaScript to run this app.
-    </noscript>
-    <!-- The root element for your Expo app. -->
+    <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-  <script src="/Nook/_expo/static/js/web/entry-c90a83fb55e82daa95a6bfd96ff5fb6f.js" defer></script>
+  <script src="/Nook/_expo/static/js/web/entry-eb504f1651ff54c664e2c39fefa3d092.js" defer></script>
 </body>
 </html>

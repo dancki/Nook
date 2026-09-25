@@ -18,13 +18,21 @@
   job point the web build at: without it the app cannot read anything and every account reads
   as not yet age-confirmed. Loopback is not an exfiltration route, so this does not weaken the
   policy for the deployed site.
+
+  https://challenges.cloudflare.com in script-src and frame-src is Cloudflare Turnstile, the bot
+  check on sign-in (review H-7): the app loads its api.js from there, only when
+  EXPO_PUBLIC_TURNSTILE_SITE_KEY is set, and the challenge runs in an iframe served from the same
+  host. Those two are all Cloudflare's CSP reference asks for; the widget was run under this exact
+  policy with no violation and nothing added to connect-src (its own requests are made inside the
+  iframe), and dropping either directive stops it loading. frame-src keeps 'self', which
+  default-src granted frames before frame-src was set.
 -->
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in http://127.0.0.1:54321 http://localhost:54321; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.supabase.in wss://*.supabase.in http://127.0.0.1:54321 http://localhost:54321 ws://127.0.0.1:54321 ws://localhost:54321; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+      content="default-src 'self'; script-src 'self' https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in http://127.0.0.1:54321 http://localhost:54321; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.supabase.in wss://*.supabase.in http://127.0.0.1:54321 http://localhost:54321 ws://127.0.0.1:54321 ws://localhost:54321; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
@@ -53,6 +61,6 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-  <script src="/Nook/_expo/static/js/web/entry-8074a188e2141a786a0db28e15c46934.js" defer></script>
+  <script src="/Nook/_expo/static/js/web/entry-f767d84d9256605e51b475d0551d129e.js" defer></script>
 </body>
 </html>

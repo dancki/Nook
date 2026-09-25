@@ -21,7 +21,12 @@ The script builds the app with `expo export --platform web` for the `/Nook` base
 `https://dancki.github.io/Nook` as the origin for the links the app generates. It takes the
 Supabase URL and publishable key from NookDev's `.env` when there is one (otherwise from the
 environment), and refuses to build if the URL is empty or points at localhost, or if the key is
-empty. It then deletes `docs/` here, copies the export in, re-creates the two scaffolding files
+empty. The Turnstile site key (`EXPO_PUBLIC_TURNSTILE_SITE_KEY`, the sign-in bot check) comes
+from the same place and is optional: unset builds with captcha off, and the script prints
+`captcha=on` or `captcha=off` so you can tell which one you shipped. It refuses Cloudflare's test
+keys unless `ALLOW_TURNSTILE_TEST_KEY=1` is set, because their dummy tokens would lock out every
+sign-in the moment captcha is switched on in Supabase. Switch captcha on in Supabase only after a
+build with the real site key is live here. It then deletes `docs/` here, copies the export in, re-creates the two scaffolding files
 below, and prints `git status` for this repository. Committing and pushing here is done by hand;
 the push is what Pages publishes.
 

@@ -45,6 +45,19 @@
       body {
         height: 100%;
       }
+      /* The canvas colour before the bundle has run, so a dark device never flashes white while
+         the app loads. Once it runs, the app sets these itself and follows the Appearance choice
+         (ThemedChrome in app/_layout.tsx); the values mirror the theme tokens' canvas. */
+      html,
+      body {
+        background-color: #f4f3f0;
+      }
+      @media (prefers-color-scheme: dark) {
+        html,
+        body {
+          background-color: #131311;
+        }
+      }
       /* These styles disable body scrolling if you are using <ScrollView> */
       body {
         overflow: hidden;
@@ -61,6 +74,6 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-  <script src="/Nook/_expo/static/js/web/entry-497a2e9e56d29f8355157fdb9ec1e35e.js" defer></script>
+  <script src="/Nook/_expo/static/js/web/entry-557d146a38e524b171caf7ab3ffb280f.js" defer></script>
 </body>
 </html>
